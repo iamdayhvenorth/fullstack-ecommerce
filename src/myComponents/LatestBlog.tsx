@@ -1,9 +1,5 @@
 import { blogLists } from "@/data";
-import { Calendar, CircleUserRound, MessageCircleMore } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 import React from "react";
-import { FaArrowRight } from "react-icons/fa";
 import BlogCard from "./BlogCard";
 
 export default function LatestBlog() {

@@ -81,7 +81,7 @@ table .sub-total {
 .cart:hover .popup,
 .favorite:hover .popup,
 .category:hover .popup {
-  @apply visible;
+  @apply visible z-50;
 }
 
 .icon-container span {

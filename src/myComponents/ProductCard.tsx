@@ -7,6 +7,7 @@ import React, { useState } from "react";
 import { ProductType } from "../../types";
 import { IoIosStar, IoIosStarHalf } from "react-icons/io";
 import ProductPreview from "./ProductPreview";
+import { CartItem, useCartStore } from "@/store/cartStore";
 
 function ProductCard(props: ProductType) {
   // destructure the props
@@ -23,6 +24,8 @@ function ProductCard(props: ProductType) {
     rating,
   } = props;
 
+  const addToCart = useCartStore((state) => state.addToCart);
+  const products = useCartStore((state) => state.products);
   const [openModal, setOpenModal] = useState<boolean>(false);
 
   const handleOpenModal = () => {
@@ -84,7 +87,20 @@ function ProductCard(props: ProductType) {
                 <Heart size={24} />
               </button>
 
-              <button className="w-[48px] h-[48px] rounded-full flex items-center justify-center bg-white transition-colors duration-200 ease-linear hover:text-white hover:bg-[#fa8232] cursor-pointer">
+              <button
+                onClick={() => {
+                  addToCart({
+                    id,
+                    initialPrice,
+                    price,
+                    quantity: 1,
+                    title,
+                    image: images[0],
+                  });
+                  console.log(products);
+                }}
+                className="w-[48px] h-[48px] rounded-full flex items-center justify-center bg-white transition-colors duration-200 ease-linear hover:text-white hover:bg-[#fa8232] cursor-pointer"
+              >
                 <ShoppingCart size={24} />
               </button>
 

@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ChevronDown,
   CircleHelp,
@@ -11,7 +13,6 @@ import {
   ShoppingCart,
   UserRound,
 } from "lucide-react";
-import React from "react";
 import Logo from "./Logo";
 import { FaFacebookF, FaPinterest, FaTwitter, FaYoutube } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa";
@@ -19,8 +20,15 @@ import Link from "next/link";
 import LoginPopup from "./LoginPopup";
 import CartPopup from "./CartPopup";
 import CategoryPopup from "./CategoryPopup";
+import { useCartStore } from "@/store/cartStore";
 
 export default function Navbar() {
+  const products = useCartStore((state) => state.products);
+  const totalQty =
+    products.length > 0
+      ? products.map((x) => x.quantity).reduce((a, b) => a + b)
+      : 0;
+
   return (
     <header>
       {/* ads */}
@@ -94,7 +102,7 @@ export default function Navbar() {
             <div className="relative cart">
               <Link href="/shopping-cart">
                 <div className="absolute -top-1 -right-1 w-4 h-4 flex items-center justify-center bg-white rounded-full text-black text-xs ">
-                  2
+                  {totalQty}
                 </div>
                 <ShoppingCart />
               </Link>
@@ -104,7 +112,7 @@ export default function Navbar() {
             </div>
 
             <div className="favorite relative">
-              <Link href="/favorite">
+              <Link href="/wishlist">
                 <Heart className="cursor-pointer" />
               </Link>
             </div>

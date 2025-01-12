@@ -27,8 +27,6 @@ export default function DealCard(props: BestDealProps) {
     setOpenModal(!openModal);
   };
 
-  console.log(openModal);
-
   return (
     <>
       <div className="p-2 border relative overflow-hidden h-full w-full">

@@ -1,9 +1,19 @@
+"use client";
+
+import { useCartStore } from "@/store/cartStore";
 import { MoveLeft, X } from "lucide-react";
 import Image from "next/image";
-import React from "react";
+import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa";
 
 export default function ShoppingCart() {
+  const products = useCartStore((state) => state.products);
+  const total = useCartStore((state) => state.total);
+  const removeFromCart = useCartStore((state) => state.removeFromCart);
+  const clearCart = useCartStore((state) => state.clearCart);
+  const increaseQty = useCartStore((state) => state.increaseQty);
+  const decreaseQty = useCartStore((state) => state.decreaseQty);
+
   return (
     <section className="p-6">
       <div className="w-full max-w-[1100px] mx-auto py-5 px-4">
@@ -11,7 +21,7 @@ export default function ShoppingCart() {
           <div className="border rounded-sm h-fit">
             <div className="p-4">
               <h3 className="font-medium text-lg text-dark text-left">
-                Shopping Card
+                Shopping Cart
               </h3>
             </div>
 
@@ -115,21 +125,66 @@ export default function ShoppingCart() {
                   <td className="sub-total">$10</td>
                 </tr>
 
-                {/* <tr>
-                  <td colSpan={3} className="text-right">
-                    Total
-                  </td>
-                  <td>$50.00</td>
-                </tr> */}
+                {products?.map((prod) => (
+                  <tr key={prod.id}>
+                    <td className="product">
+                      <span
+                        className=""
+                        onClick={() => removeFromCart(prod.id)}
+                      >
+                        <X />
+                      </span>
+                      <span className="block">
+                        <Image
+                          src={prod.image}
+                          alt="Led TV"
+                          width={70}
+                          height={70}
+                        />
+                      </span>
+                      <span>4K UHD LED Smart TV with Chromecast Built-in</span>
+                    </td>
+                    <td className="price">
+                      <span className="flex gap-2">
+                        <del>${prod.initialPrice}</del>
+                        <span className="font-medium">${prod?.price}</span>
+                      </span>
+                    </td>
+                    <td className="quantity">
+                      <button
+                        onClick={() => decreaseQty(prod.id)}
+                        className="font-medium text-base text-dark hover:text-red-600 transition-colors duration-200 ease-linear"
+                      >
+                        -
+                      </button>
+                      <span>
+                        {prod.quantity < 10
+                          ? `0${prod.quantity}`
+                          : prod.quantity}
+                      </span>
+                      <button
+                        onClick={() => increaseQty(prod.id)}
+                        className="font-medium text-base text-dark hover:text-green-600 transition-colors duration-200 ease-linear"
+                      >
+                        +
+                      </button>
+                    </td>
+                    <td className="sub-total">
+                      ${prod?.quantity * prod?.price}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
 
             <div className="border-t p-4 flex items-center justify-between">
-              <button className="btn">
+              <Link href={`/products`} className="btn">
                 <MoveLeft />
                 Return to Shop
+              </Link>
+              <button onClick={() => clearCart()} className="btn">
+                Clear Cart
               </button>
-              <button className="btn">Update Cart</button>
             </div>
           </div>
 
@@ -164,7 +219,7 @@ export default function ShoppingCart() {
               <div className="flex flex-col gap-3 pt-3">
                 <div className="flex items-center justify-between text-dark font-semibold text-base">
                   <span className="text-[#5f6c72]">Total</span>
-                  <span className="uppercase">$357.99 USD</span>
+                  <span className="uppercase">{`$${total} USD`}</span>
                 </div>
 
                 <button

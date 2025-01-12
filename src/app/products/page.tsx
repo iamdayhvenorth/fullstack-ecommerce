@@ -229,7 +229,10 @@ export default function page() {
                 </span>
 
                 {[...Array(6)].map((_, idx) => (
-                  <span className="w-10 h-10 rounded-full border  text-dark flex items-center justify-center cursor-pointer hover:text-white hover:border-[#fa8232] hover:bg-[#fa8232] transition-colors duration-150 ease-linear text-sm">
+                  <span
+                    key={idx}
+                    className="w-10 h-10 rounded-full border  text-dark flex items-center justify-center cursor-pointer hover:text-white hover:border-[#fa8232] hover:bg-[#fa8232] transition-colors duration-150 ease-linear text-sm"
+                  >
                     {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
                   </span>
                 ))}

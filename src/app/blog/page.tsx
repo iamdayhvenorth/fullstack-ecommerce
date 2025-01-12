@@ -1,8 +1,15 @@
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 import { blogLists, popularTags } from "@/data";
 import BlogCard from "@/myComponents/BlogCard";
 import { ChevronDown, Search } from "lucide-react";
 import Image from "next/image";
-import React from "react";
 import { IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
 
 export default function BlogPage() {
@@ -177,16 +184,33 @@ export default function BlogPage() {
               </form>
 
               <div className="flex gap-3 items-center justify-end">
-                <span className="text-sm font-medium text-dark ">Sort by:</span>
+                <span className="text-sm font-medium text-dark ">
+                  Sort by :
+                </span>
 
-                <div className="relative inline-block">
-                  <select className="block  appearance-none border text-dark p-2  pr-10 rounded leading-tight text-sm focus:outline-none">
+                <div>
+                  {/* <select className="block  appearance-none border text-dark p-2  pr-10 rounded leading-tight text-sm focus:outline-none">
                     <option className="option">Most Popular</option>
                     <option className="option">Recent</option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-dark">
+                  </select> */}
+
+                  <Select>
+                    <SelectTrigger className="text-dark p-2 rounded-[2px]  text-sm focus:outline-none">
+                      <SelectValue placeholder="Price: Low to High" />
+                    </SelectTrigger>
+                    <SelectContent className="p-0 rounded-[2px]">
+                      <SelectItem value="Low to High">
+                        Price: Low to High
+                      </SelectItem>
+                      <SelectItem value="High to Low">
+                        Price: High to Low
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {/* <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-dark">
                     <ChevronDown className="w-4 h-4" />
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

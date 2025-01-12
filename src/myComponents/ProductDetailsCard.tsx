@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ChevronDown,
   Copy,
@@ -13,6 +15,7 @@ import {
 import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 import { ProductType } from "../../types";
+import { useCartStore } from "@/store/cartStore";
 
 export default function ProductDetailsCard({
   cName,
@@ -21,6 +24,12 @@ export default function ProductDetailsCard({
   cName: string;
   prod: ProductType;
 }) {
+  const addToCart = useCartStore((state) => state.addToCart);
+  const products = useCartStore((state) => state.products);
+
+  let detail =
+    products.length > 0 ? products.find((item) => item.id === prod.id) : 0
+
   return (
     <section className={cName}>
       <div className="relative flex flex-col gap-3 w-[70%] h-fit">
@@ -151,14 +160,25 @@ export default function ProductDetailsCard({
               <Minus size={20} />
             </button>
             <span className="text-dark font-medium text-base select-none">
-              01
+              {detail?.quantity}
             </span>
             <button className="text-dark hover:text-green-600 transition-colors duration-150 ease-linear">
               <Plus size={20} />
             </button>
           </div>
 
-          <button className="flex-1 text-white uppercase font-semibold text-sm opacity-80 bg-[#fa8232] rounded-[2px] py-2 px-5 hover:opacity-100 transition-opacity duration-200 ease-linear flex items-center justify-center gap-2">
+          <button
+            onClick={() =>
+              addToCart({
+                id: prod.id,
+                title: prod.title,
+                image: prod.images[0],
+                price: prod.price,
+                quantity: 1,
+              })
+            }
+            className="flex-1 text-white uppercase font-semibold text-sm opacity-80 bg-[#fa8232] rounded-[2px] py-2 px-5 hover:opacity-100 transition-opacity duration-200 ease-linear flex items-center justify-center gap-2"
+          >
             Add to Cart
             <ShoppingCart className="ml-2 w-4 h-4" />
           </button>

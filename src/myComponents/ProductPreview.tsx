@@ -14,7 +14,7 @@ export default function ProductPreview({
   prod: ProductType;
   handleOpenModal: React.MouseEventHandler;
 }) {
-  console.log(prod);
+ 
 
   return (
     <section className="fixed bg-black/80 top-0 left-0 w-full bottom-0 h-screen-auto z-50 flex items-center justify-center ">
