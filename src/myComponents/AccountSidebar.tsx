@@ -2,15 +2,6 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
-import {
-  CreditCard,
-  Heart,
-  Layers,
-  LayoutDashboard,
-  LogOut,
-  Settings,
-  ShoppingCart,
-} from "lucide-react";
 import { accountLinks } from "@/data";
 import Link from "next/link";
 

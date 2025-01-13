@@ -8,6 +8,7 @@ import { ProductType } from "../../types";
 import { IoIosStar, IoIosStarHalf } from "react-icons/io";
 import ProductPreview from "./ProductPreview";
 import { CartItem, useCartStore } from "@/store/cartStore";
+import { useWishListStore } from "@/store/wishlistStore";
 
 function ProductCard(props: ProductType) {
   // destructure the props
@@ -24,9 +25,13 @@ function ProductCard(props: ProductType) {
     rating,
   } = props;
 
+  // shopping cart states and function
   const addToCart = useCartStore((state) => state.addToCart);
   const products = useCartStore((state) => state.products);
   const [openModal, setOpenModal] = useState<boolean>(false);
+
+  // wishlist function
+  const addToWishlist = useWishListStore((state) => state.addToWishlist);
 
   const handleOpenModal = () => {
     setOpenModal(!openModal);
@@ -83,7 +88,18 @@ function ProductCard(props: ProductType) {
           {/* overlay */}
           <div className="absolute top-0 -left-[1000px] w-full  bottom-0 bg-dark/50 z-10 flex justify-center items-center rounded-[2px] overlay transition-all duration-500 ease-in-out">
             <div className="flex items-center gap-2">
-              <button className="w-[48px] h-[48px] rounded-full flex items-center justify-center bg-white transition-colors duration-200 ease-linear hover:text-white hover:bg-[#fa8232] cursor-pointer">
+              <button
+                onClick={() =>
+                  addToWishlist({
+                    id,
+                    initialPrice,
+                    price,
+                    title,
+                    image: images[0],
+                  })
+                }
+                className="w-[48px] h-[48px] rounded-full flex items-center justify-center bg-white transition-colors duration-200 ease-linear hover:text-white hover:bg-[#fa8232] cursor-pointer"
+              >
                 <Heart size={24} />
               </button>
 
@@ -97,7 +113,6 @@ function ProductCard(props: ProductType) {
                     title,
                     image: images[0],
                   });
-                  console.log(products);
                 }}
                 className="w-[48px] h-[48px] rounded-full flex items-center justify-center bg-white transition-colors duration-200 ease-linear hover:text-white hover:bg-[#fa8232] cursor-pointer"
               >

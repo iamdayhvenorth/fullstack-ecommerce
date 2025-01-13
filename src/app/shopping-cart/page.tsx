@@ -176,12 +176,20 @@ export default function ShoppingCart() {
         <section className="p-10">
           <div className="w-full max-w-[1100px] mx-auto py-5 px-4">
             <div className="flex items-center justify-center flex-col space-y-10">
+              <div>
+                <Image
+                  src="/images/empty-cart.png"
+                  alt="Empty Cart"
+                  width={200}
+                  height={200}
+                  className="rounded-full"
+                />
+              </div>
+
               <h3 className="font-medium text-lg text-dark text-left">
                 Cart is Empty
               </h3>
 
-
-              
               <div className="flex gap-4 items-center">
                 <Link
                   href={"/"}

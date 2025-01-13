@@ -21,13 +21,19 @@ import LoginPopup from "./LoginPopup";
 import CartPopup from "./CartPopup";
 import CategoryPopup from "./CategoryPopup";
 import { useCartStore } from "@/store/cartStore";
+import { usePathname } from "next/navigation";
+import { useWishListStore } from "@/store/wishlistStore";
+import { navLinks } from "@/data";
 
 export default function Navbar() {
   const products = useCartStore((state) => state.products);
+  const wishlist = useWishListStore((state) => state.products);
   const totalQty =
     products.length > 0
       ? products.map((x) => x.quantity).reduce((a, b) => a + b)
       : 0;
+
+  const pathname = usePathname();
 
   return (
     <header>
@@ -100,29 +106,51 @@ export default function Navbar() {
 
           <div className="text-white flex items-center gap-4">
             <div className="relative cart">
-              <Link href="/shopping-cart">
-                <div className="absolute -top-1 -right-1 w-4 h-4 flex items-center justify-center bg-white rounded-full text-black text-xs ">
-                  {totalQty}
-                </div>
+              <Link
+                href="/shopping-cart"
+                className={`hover:text-[#fa8232] ${
+                  pathname.includes("/shopping-cart") ? "text-[#fa8232]" : ""
+                }`}
+              >
+                {totalQty > 0 ? (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center bg-[#fa8232] rounded-full text-white font-medium text-xs ">
+                    {totalQty}
+                  </span>
+                ) : null}
                 <ShoppingCart />
               </Link>
 
               {/* cart popup */}
-              <CartPopup />
+              {!pathname.includes("shopping-cart") && <CartPopup />}
             </div>
 
             <div className="favorite relative">
-              <Link href="/wishlist">
-                <Heart className="cursor-pointer" />
+              <Link
+                href="/wishlist"
+                className={`hover:text-[#fa8232] ${
+                  pathname.includes("/wishlist") ? "text-[#fa8232]" : ""
+                }`}
+              >
+                {wishlist.length > 0 ? (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center bg-[#fa8232] rounded-full text-white font-medium text-xs ">
+                    {wishlist.length}
+                  </span>
+                ) : null}
+                <Heart />
               </Link>
             </div>
 
             <div className="account relative">
-              <Link href="/login">
+              <Link
+                href="/login"
+                className={`hover:text-[#fa8232] ${
+                  pathname.includes("/login") ? "text-[#fa8232]" : ""
+                }`}
+              >
                 <UserRound />
               </Link>
               {/* sign in popup */}
-              <LoginPopup />
+              {!pathname.includes("login") && <LoginPopup />}
             </div>
           </div>
         </div>
@@ -131,8 +159,8 @@ export default function Navbar() {
       <div className="shadow-md">
         <div className="w-full max-w-[1100px] p-4 mx-auto flex justify-between items-center">
           {/* left content */}
-          <div className="flex items-center gap-2">
-            <div className="relative category">
+          <ul className="flex items-center gap-2">
+            <li className="relative category">
               <div className="flex items-center gap-3 py-2 px-4 bg-[#f2f4f5] rounded text-sm cursor-pointer">
                 <span>All Category</span>
                 <ChevronDown size={14} className="mt-1" />
@@ -140,48 +168,24 @@ export default function Navbar() {
 
               {/* Category popup */}
               <CategoryPopup />
-            </div>
+            </li>
 
-            <Link
-              href="/track-order"
-              className="flex items-center gap-1 py-2 px-2 rounded hover:bg-[#f2f4f5]  text-sm cursor-pointer"
-            >
-              <MapPin size={14} />
-              <span>Track Order</span>
-            </Link>
-
-            <Link
-              href="/about"
-              className="flex items-center gap-1 py-2 px-2 rounded hover:bg-[#f2f4f5]  text-sm cursor-pointer"
-            >
-              <GitCompare size={14} />
-              <span>About Us</span>
-            </Link>
-
-            <Link
-              href="/support"
-              className="flex items-center gap-1 py-2 px-2 rounded hover:bg-[#f2f4f5]  text-sm cursor-pointer"
-            >
-              <Headphones size={14} />
-              <span>Customer Support</span>
-            </Link>
-
-            <Link
-              href="/blog"
-              className="flex items-center gap-1 py-2 px-2 rounded hover:bg-[#f2f4f5]  text-sm cursor-pointer"
-            >
-              <Flame size={14} />
-              <span>Blog</span>
-            </Link>
-
-            <Link
-              href="/help"
-              className="flex items-center gap-1 py-2 px-2 rounded hover:bg-[#f2f4f5]  text-sm cursor-pointer"
-            >
-              <CircleHelp size={14} />
-              <span>Need Help</span>
-            </Link>
-          </div>
+            {navLinks.map((navlink) => (
+              <li key={navlink.label}>
+                <Link
+                  href={navlink.path}
+                  className={`flex items-center gap-1 py-2 px-2 rounded hover:bg-[#f2f4f5] hover:text-[#fa8232]  text-sm cursor-pointer ${
+                    pathname.includes(navlink.path)
+                      ? "text-[#fa8232] bg-[#f2f4f5] "
+                      : ""
+                  }`}
+                >
+                  <navlink.icon size={14} />
+                  <span>{navlink.label}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
 
           {/* right content */}
           <Link href="/" className="flex items-center gap-1">

@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "This is the support page",
 };
 
-export default function AccountLayout({
+export default function SupportLayout({
   children,
 }: {
   children: React.ReactNode;

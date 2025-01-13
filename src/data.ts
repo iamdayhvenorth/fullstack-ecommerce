@@ -12,8 +12,13 @@ import {
     LogOut,
     Settings,
     ShoppingCart,
-    MapPin 
+    MapPin,
+    GitCompare,
+    Headphones,
+    Flame,
+    CircleHelp
   } from "lucide-react";
+
 
 
   
@@ -34,7 +39,7 @@ interface Product {
 
 interface Support {
     id: number;
-    Icon: any;
+    Icon: any ;
     title: string;
 }
 
@@ -122,7 +127,7 @@ export const accountLinks:AccountLink[] = [
         id: 5,
         title: 'Wishlist',
         Icon: Heart,
-        path: '/favorite'
+        path: '/wishlist'
     },
     {
         id: 6,
@@ -259,7 +264,7 @@ export const popularTopics: {id: number, topic:string}[] =  [
         topic: "What is the Voucher & Gift Offer in this Campaign?"
     },
     {
-        id: 1,
+        id: 9,
         topic: "How to change my shop name?"
     },
 ]
@@ -267,7 +272,7 @@ export const popularTopics: {id: number, topic:string}[] =  [
 export const support: Support[] = [
     {
         id: 1,
-        Icon: Truck,
+        Icon: Truck ,
         title: "Track Order"
     },
     {
@@ -507,6 +512,45 @@ export const price_ranges = [
     "$500 - $1000",
     "$1000 - $5000",
     "Over $5000",
+]
+
+type NavLink = {
+    id: number;
+    label: string;
+    path: string;
+    icon: any
+}
+export const navLinks:NavLink[] = [
+    {
+        id: 1,
+        label: "Track Order",
+        path: "/track-order",
+        icon: MapPin
+    },
+    {
+        id: 2,
+        label: "About Us",
+        path: "/about",
+        icon: GitCompare
+    },
+    {
+        id: 3,
+        label: "Customer Support",
+        path: "/support",
+        icon: Headphones
+    },
+    {
+        id: 4,
+        label: "Blog",
+        path: "/blog",
+        icon: Flame
+    },
+    {
+        id: 5,
+        label: "Need Help",
+        path: "/help",
+        icon: CircleHelp
+    },
 ]
 
 

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Shopping Cart",
-  description: "This is the shopping cart page",
+  title: "Profile",
+  description: "This is the Profile page",
 };
 
-export default function ShoppingCartLayout({
+export default function ProfileLayout({
   children,
 }: {
   children: React.ReactNode;

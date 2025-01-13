@@ -1,7 +1,7 @@
 import { MessageCircleMore, PhoneCall, Search } from "lucide-react";
-import React from "react";
 import { popularTopics, support } from "@/data";
 import { FaArrowRight } from "react-icons/fa";
+
 export default function page() {
   return (
     <>
@@ -44,6 +44,7 @@ export default function page() {
         </div>
       </section>
 
+      {/* assistance section */}
       <section className="p-6 border-y">
         <div className="w-full max-w-[1100px] mx-auto py-5 px-4">
           <div>
@@ -67,6 +68,7 @@ export default function page() {
         </div>
       </section>
 
+      {/* popular topics */}
       <section className="p-6">
         <div className="w-full max-w-[1100px] mx-auto py-5 px-4">
           <div>

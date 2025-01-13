@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "This is the blog page",
 };
 
-export default function AccountLayout({
+export default function BlogLayout({
   children,
 }: {
   children: React.ReactNode;

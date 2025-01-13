@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "This is the about page",
 };
 
-export default function AccountLayout({
+export default function AboutLayout({
   children,
 }: {
   children: React.ReactNode;

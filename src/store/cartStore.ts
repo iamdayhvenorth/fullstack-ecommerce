@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { createJSONStorage, persist, devtools } from "zustand/middleware";
-import toast, { Toaster } from 'react-hot-toast';
 
 
 
@@ -45,7 +44,6 @@ devtools(
           existingItem.quantity += item.quantity
         }else {
           state.products.push(item)
-          toast.success("Product added to cart successfully")
         }
         
         state.total = state.products.map(x => x.quantity * x.price).reduce((x,y) => x + y)
@@ -89,13 +87,13 @@ devtools(
     name: 'cart-storage',
     version: 1,
     storage: createJSONStorage(()=>localStorage),
-   partialize: (state) => ({
+    partialize: (state) => ({
     products: state.products,
-    
    })
   })
 ,{
-  enabled: true
+  enabled: true,
+  name: "cart"
 })
 )
 
