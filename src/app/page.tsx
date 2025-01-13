@@ -1,3 +1,4 @@
+import { Toaster } from "react-hot-toast";
 import Link from "next/link";
 import Image from "next/image";
 import { FaArrowRight } from "react-icons/fa6";
@@ -13,6 +14,7 @@ import Blog from "@/myComponents/LatestBlog";
 export default function Home() {
   return (
     <>
+      <Toaster />
       <section className="w-full">
         <div className="w-full max-w-[1100px] mx-auto py-5 px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">

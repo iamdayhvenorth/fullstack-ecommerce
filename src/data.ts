@@ -45,6 +45,53 @@ interface AccountLink {
     path: string
 }
 
+export const productCat = [
+    {
+        id: 1,
+        cat: "Monitor",
+        img:"/images/monitor-and-keyboard.png",
+        alt:"Monitor & Keyboard"
+    },
+    {
+        id: 2,
+        cat: "Smart Phones",
+        img:"/images/black-iphone.png",
+        alt:"Black Iphone"
+    },
+    {
+        id: 3,
+        cat: "Accessories",
+        img:"/images/headphone-black.png",
+        alt:"Black Headphone"
+    },
+    {
+        id: 4,
+        cat: "Electronics",
+        img:"/images/red-keyboard.png",
+        alt:"Red Keyboard"
+    },
+    {
+        id: 5,
+        cat:"Camera & Photo",
+        img:"/images/canon-camera.png",
+        alt:"Canon Camera"
+    },
+    {
+        id: 6,
+        cat: "Appliances",
+        img:"/images/white-airconditioner.png",
+        alt:"Ahite AC"
+    },
+    {
+        id: 7,
+        cat: "TV & Homes",
+        img:"/images/Led-TV.png",
+        alt:"Led TV"
+    },
+
+
+]
+
 
 export const accountLinks:AccountLink[] = [
     {
