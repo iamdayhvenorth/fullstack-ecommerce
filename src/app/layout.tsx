@@ -3,6 +3,8 @@ import "./globals.css";
 import Navbar from "../myComponents/Navbar";
 import Footer from "@/myComponents/Footer";
 import BreadCrumb from "@/myComponents/BreadCrumb";
+import ToastContext from "@/myComponents/ToastContext";
+import AuthProvider from "@/components/AuthProvider";
 
 export const metadata: Metadata = {
   title: "Clicon e-commerce",
@@ -17,11 +19,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Navbar />
-        {/* breadCrumbs */}
-        {/* <BreadCrumb /> */}
-        <main>{children}</main>
-        <Footer />
+        <AuthProvider>
+          <ToastContext />
+          <Navbar />
+          {/* breadCrumbs */}
+          {/* <BreadCrumb /> */}
+          <main>{children}</main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

@@ -24,12 +24,6 @@ export default function Profile() {
           </div>
           <div className="flex-1 w-full focus:outline-none text-dark font-normal text-sm p-1">
             <ProfileForm />
-
-            <div className="mt-4">
-              <button className="text-sm font-semibold text-white bg-[#fa8232] py-2 px-3 rounded-[2px] opacity-80 hover:opacity-100 transition-opacity duration-150 ease-in uppercase w-fit">
-                Save Changes
-              </button>
-            </div>
           </div>
         </div>
       </section>
@@ -77,12 +71,6 @@ export default function Profile() {
 
           <div className="p-2">
             <PasswordForm />
-
-            <div className="mt-4">
-              <button className="text-sm font-semibold text-white bg-[#fa8232] py-2 px-3 rounded-[2px] opacity-80 hover:opacity-100 transition-opacity duration-150 ease-in uppercase w-fit">
-                Save Changes
-              </button>
-            </div>
           </div>
         </div>
       </section>

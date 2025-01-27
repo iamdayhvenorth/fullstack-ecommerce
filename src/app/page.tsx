@@ -10,7 +10,7 @@ import TopRated from "@/myComponents/TopRated";
 import NewsLetter from "@/myComponents/NewsLetter";
 import Blog from "@/myComponents/LatestBlog";
 
-export default function Home() {
+export default async function Home() {
   return (
     <>
       <section className="w-full">

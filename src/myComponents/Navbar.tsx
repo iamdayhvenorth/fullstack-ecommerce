@@ -150,7 +150,7 @@ export default function Navbar() {
                 <UserRound />
               </Link>
               {/* sign in popup */}
-              {!pathname.includes("login") && <LoginPopup />}
+              {!pathname.includes("/login") && <LoginPopup />}
             </div>
           </div>
         </div>

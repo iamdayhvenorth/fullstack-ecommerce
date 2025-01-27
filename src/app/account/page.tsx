@@ -1,5 +1,11 @@
+import { auth } from "@/auth";
 import React from "react";
 
-export default function Account() {
-  return <div>Account</div>;
+export default async function Account() {
+  const session = await auth();
+  return (
+    <div>
+      <pre>{JSON.stringify(session, null, 2)}</pre>
+    </div>
+  );
 }
