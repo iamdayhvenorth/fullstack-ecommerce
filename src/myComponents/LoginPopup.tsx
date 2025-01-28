@@ -1,23 +1,19 @@
-import { LogOut } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import { FaArrowRight } from "react-icons/fa";
-import GoogleButton from "./GoogleButton";
-import GithubButton from "./GithubButton";
 import { useSession } from "next-auth/react";
 import LogoutButton from "./LogoutButton";
 import LoginForm from "./LoginForm";
 
 export default function LoginPopup() {
   const { data: session } = useSession();
-  // const session = await auth();
 
   return (
     <div className="absolute bg-white text-dark p-4 rounded-sm top-8 right-0 w-[350px] z-10 shadow-[0px_5px_17px_-4px_rgba(0,0,0,0.37)] popup invisible transition-all duration-300 ease-in ">
       {session ? (
         <ul>
           <li>
-            <Link href="/account/dashboard">Dashboard</Link>
+            <Link href="/account">Dashboard</Link>
           </li>
           <li>
             <LogoutButton />

@@ -4,7 +4,9 @@ import { auth, signIn, signOut } from "@/auth";
 import { z } from "zod";
 import {
   changePasswordSchema,
+  forgotPasswordSchema,
   loginSchema,
+  resetPasswordSchema,
   signupSchema,
   updatePersonInfoSchema,
 } from "@/schemas/userSchema";
@@ -12,11 +14,16 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
+import crypto from "crypto";
+import transportMail from "@/lib/mail";
+import { RESET_PASSWORD, RESET_SUCCESSFUL } from "@/lib/emailTemplates";
 
 export type LoginData = z.infer<typeof loginSchema>;
 export type SignupData = z.infer<typeof signupSchema>;
 export type PersonalInfoForm = z.infer<typeof updatePersonInfoSchema>;
 export type UpdatePassword = z.infer<typeof changePasswordSchema>;
+export type ForgotPassEmail = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
 
 const getCurrentUser = async () => {
   const user = await auth();
@@ -104,7 +111,7 @@ export const registerUser = async (data: SignupData) => {
 export const updatePersonalInfo = async (data: PersonalInfoForm) => {
   try {
     const result = updatePersonInfoSchema.safeParse(data);
-    const session = await getCurrentUser();
+    const session = await auth();
     if (session?.user) {
       if (!result.success)
         return { success: false, error: "Email/Password required" };
@@ -173,6 +180,166 @@ export const changePassword = async (data: UpdatePassword) => {
       return { success: true, message: "password updated" };
     }
     return { success: false, error: "you are not authenticated" };
+  } catch (error) {
+    return { success: false, error: (error as any).message };
+  }
+};
+
+export const forgotPassword = async (data: ForgotPassEmail) => {
+  const session = await auth();
+  try {
+    if (!session?.user) {
+      const result = forgotPasswordSchema.safeParse(data);
+      if (!result.success)
+        return { success: false, error: "Email is required" };
+
+      const { email } = result.data;
+
+      // verify email from the database
+      const user = await prisma.user.findFirst({
+        where: { email },
+      });
+
+      if (!user) {
+        return {
+          success: false,
+          message:
+            "if your email is associated with us, a code will be sent. thanks!",
+        };
+      }
+
+      // before generating token check if one exist rhen delete
+      const isToken = await prisma.emailResetToken.findFirst({
+        where: {
+          userId: user.id,
+          expires: {
+            gte: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour ago
+          },
+        },
+      });
+
+      if (isToken) {
+        await prisma.emailResetToken.delete({
+          where: { id: isToken.id },
+        });
+      }
+
+      // generate token
+      const passwordResetToken: string = crypto.randomBytes(16).toString("hex");
+      // hash the token before saving to db
+      const salt = await bcrypt.genSalt(10);
+      const hashedToken = await bcrypt.hash(passwordResetToken, salt);
+
+      // save token to db
+      await prisma.emailResetToken.create({
+        data: {
+          userId: user.id,
+          token: hashedToken,
+          expires: new Date(Date.now() + 1 * 60 * 60 * 1000), // 1 hour
+        },
+      });
+
+      // send to email
+      const transport = await transportMail();
+      const link = `http://localhost:3000/login/forget-password/reset-password?token=${passwordResetToken}&userId=${user.id}`;
+
+      const mailOptions = {
+        from: `DaveCodeSolutions ${process.env.AUTH_EMAIL}`,
+        to: user.email!,
+        subject: "Password Reset",
+        html: RESET_PASSWORD.replace("{link}", link),
+      };
+
+      transport.sendMail(mailOptions, (err, info) => {
+        if (err) console.log(err);
+        console.log("Email sent: " + info.response);
+      });
+      return {
+        success: true,
+        message:
+          "if your email is associated with us, a code will be sent. thanks!",
+      };
+    }
+
+    return { success: false, error: "you cant perform this action" };
+  } catch (error) {
+    return { success: false, error: (error as any).message };
+  }
+};
+
+export const resetPassword = async (
+  data: ResetPasswordForm,
+  token: string | null,
+  id: string | null
+) => {
+  const session = await auth();
+
+  try {
+    if (!token || !id) return { success: false, error: "invalid or no token " };
+
+    const result = resetPasswordSchema.safeParse(data);
+    if (!result.success)
+      return { success: false, error: "all fields are required" };
+
+    if (!session?.user) {
+      const { password } = result.data;
+
+      // verify if token match
+      const isToken = await prisma.emailResetToken.findFirst({
+        where: {
+          userId: id,
+          expires: {
+            gte: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour ago
+          },
+        },
+      });
+
+      if (!isToken)
+        return { success: false, error: "Invalid token or token expired" };
+      // if token found compare token
+
+      const isMatch = await bcrypt.compare(token, isToken.token);
+      if (!isMatch) return { success: false, error: "invalid token" };
+
+      const user = await prisma.user.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      if (!user) return { success: false, error: "you are not authorized" };
+
+      await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          password: await bcrypt.hash(password, 10),
+        },
+      });
+
+      await prisma.emailResetToken.delete({
+        where: { id: isToken.id },
+      });
+
+      // send email notification
+      const transport = await transportMail();
+
+      const mailOptions = {
+        from: `DaveCodeSolutions ${process.env.AUTH_EMAIL}`,
+        to: user.email!,
+        subject: "Password Reset",
+        html: RESET_SUCCESSFUL,
+      };
+
+      transport.sendMail(mailOptions, (err, info) => {
+        if (err) console.log(err);
+        console.log("Email sent: " + info.response);
+      });
+      return { success: true, message: "password changed" };
+    }
+
+    return { success: false, error: "you cant perform this action" };
   } catch (error) {
     return { success: false, error: (error as any).message };
   }

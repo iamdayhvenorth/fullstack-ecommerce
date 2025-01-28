@@ -2,8 +2,10 @@
 
 import { useCartStore } from "@/store/cartStore";
 import { MoveLeft, X } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import { FaArrowRight } from "react-icons/fa";
 
 export default function ShoppingCart() {
@@ -14,6 +16,15 @@ export default function ShoppingCart() {
   const increaseQty = useCartStore((state) => state.increaseQty);
   const decreaseQty = useCartStore((state) => state.decreaseQty);
 
+  const { data: session } = useSession();
+
+  const handleCheckout = async () => {
+    if (!session?.user) {
+      toast.error("please login");
+      return;
+    }
+    toast.success("thanks");
+  };
   return (
     <>
       {products.length > 0 ? (
@@ -140,6 +151,7 @@ export default function ShoppingCart() {
 
                     <button
                       type="submit"
+                      onClick={() => handleCheckout()}
                       className="bg-[#fa8232] text-white uppercase w-full rounded-sm p-2 font-semibold text-sm flex items-center justify-center gap-3 opacity-80 hover:opacity-100 transition-opacity duration-200 ease-linear"
                     >
                       Proceed to Checkout

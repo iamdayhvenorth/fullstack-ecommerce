@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { updatePersonInfoSchema } from "@/schemas/userSchema";
 import { PersonalInfoForm, updatePersonalInfo } from "@/actions/auth";
 import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
 
 type CountryState = {
   name: string;
@@ -25,6 +26,8 @@ export default function ProfileForm() {
   const [countryCode, setCountryCode] = useState<string | null>(null);
   const [countryStates, setCountryStates] = useState<CountryState[]>([]);
   const [state, setState] = useState<string | null>();
+
+  const { update } = useSession();
 
   const {
     register,
@@ -63,6 +66,7 @@ export default function ProfileForm() {
     const res = await updatePersonalInfo(data);
     if (res.success && res.message) {
       toast.success(res.message);
+      await update();
     }
     if (!res.success && res.error) {
       toast.error(res.error);
