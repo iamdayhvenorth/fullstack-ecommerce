@@ -3,6 +3,7 @@
 import { auth, signIn, signOut } from "@/auth";
 import { z } from "zod";
 import {
+  addressSchema,
   changePasswordSchema,
   forgotPasswordSchema,
   loginSchema,
@@ -16,7 +17,11 @@ import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
 import crypto from "crypto";
 import transportMail from "@/lib/mail";
-import { RESET_PASSWORD, RESET_SUCCESSFUL } from "@/lib/emailTemplates";
+import {
+  EMAILVERIFICATION,
+  RESET_PASSWORD,
+  RESET_SUCCESSFUL,
+} from "@/lib/emailTemplates";
 
 export type LoginData = z.infer<typeof loginSchema>;
 export type SignupData = z.infer<typeof signupSchema>;
@@ -24,6 +29,7 @@ export type PersonalInfoForm = z.infer<typeof updatePersonInfoSchema>;
 export type UpdatePassword = z.infer<typeof changePasswordSchema>;
 export type ForgotPassEmail = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
+export type AddressFormData = z.infer<typeof addressSchema>;
 
 const getCurrentUser = async () => {
   const user = await auth();
@@ -60,11 +66,6 @@ export const loginWithCredentials = async (data: LoginData) => {
     let errorMsg = "";
     if (error instanceof Error && error.message === "NEXT_REDIRECT") {
       redirect("/account/profile");
-    } else if (
-      error instanceof Error &&
-      error.message === "OAuthAccountNotLinked"
-    ) {
-      redirect("/about");
     } else if (error instanceof AuthError) {
       errorMsg = error.message;
     } else {
@@ -94,7 +95,7 @@ export const registerUser = async (data: SignupData) => {
     // hash the password bfre sending to the db
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    await prisma.user.create({
+    const newUser = await prisma.user.create({
       data: {
         name,
         email,
@@ -102,9 +103,42 @@ export const registerUser = async (data: SignupData) => {
       },
     });
 
+    // generate email verification code
+    const emailVerificationToken = Math.floor(100000 + Math.random() * 900000);
+
+    await prisma.emailVerificationToken.create({
+      data: {
+        userId: newUser.id,
+        token: emailVerificationToken.toString(),
+        expires: new Date(Date.now() + 10 * 60 * 1000),
+      },
+    });
+
+    const transport = await transportMail();
+    const mailOptions = {
+      from: `DaveCodeSolutions ${process.env.AUTH_EMAIL}`,
+      to: newUser.email,
+      subject: "Verify Email",
+      html: EMAILVERIFICATION.replace(
+        "{verificationCode}",
+        emailVerificationToken.toString()
+      ),
+    };
+
+    transport.sendMail(mailOptions, (err, info) => {
+      if (err) console.log(err);
+      console.log("Email sent: " + info.response);
+    });
+
     return { success: true, message: "user created" };
   } catch (error) {
-    return { success: false, error: "error" };
+    let errorMsg = "";
+    if (error instanceof Error && error.message === "NEXT_REDIRECT") {
+      redirect("/login");
+    } else {
+      errorMsg = (error as any).message;
+    }
+    return { success: false, error: errorMsg };
   }
 };
 
@@ -245,7 +279,7 @@ export const forgotPassword = async (data: ForgotPassEmail) => {
 
       const mailOptions = {
         from: `DaveCodeSolutions ${process.env.AUTH_EMAIL}`,
-        to: user.email!,
+        to: user.email,
         subject: "Password Reset",
         html: RESET_PASSWORD.replace("{link}", link),
       };
@@ -340,6 +374,68 @@ export const resetPassword = async (
     }
 
     return { success: false, error: "you cant perform this action" };
+  } catch (error) {
+    return { success: false, error: (error as any).message };
+  }
+};
+
+export const updateUserAddress = async (data: AddressFormData) => {
+  const session = await auth();
+  try {
+    if (session?.user) {
+      const res = addressSchema.safeParse(data);
+      if (!res.success)
+        return { success: false, error: "all fields are required" };
+
+      const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+      });
+
+      if (!user) return { success: false, error: "You are not auhorised" };
+
+      const address = await prisma.address.findFirst({
+        where: {
+          userId: user.id,
+          type: "BILLING",
+        },
+      });
+
+      // if address not found u can create one or else just update
+      if (!address) {
+        await prisma.address.create({
+          data: {
+            userId: user.id,
+            zip: res.data.zip,
+            city: res.data.city,
+            state: res.data.state,
+            country: res.data.country,
+            firstName: res.data.firstName,
+            lastName: res.data.lastName,
+            address: res.data.address,
+          },
+        });
+        return { success: true, message: "Address created successfully" };
+      } else {
+        await prisma.address.update({
+          where: {
+            id: address.id,
+            userId: user.id,
+          },
+          data: {
+            zip: res.data.zip,
+            city: res.data.city,
+            state: res.data.state,
+            country: res.data.country,
+            firstName: res.data.firstName,
+            lastName: res.data.lastName,
+            address: res.data.address,
+          },
+        });
+        return { success: true, message: "Address updated successfully" };
+      }
+    } else {
+      return { success: false, error: "You are not authenticated" };
+    }
   } catch (error) {
     return { success: false, error: (error as any).message };
   }

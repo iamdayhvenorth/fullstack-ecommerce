@@ -9,12 +9,13 @@ import { registerUser, SignupData } from "@/actions/auth";
 import { signupSchema } from "@/schemas/userSchema";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
   // const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>("");
   const [success, setsuccess] = useState<string | undefined>("");
-
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -33,6 +34,7 @@ export default function RegisterForm() {
       setsuccess(res.message);
       toast.success(res.message);
       reset();
+      router.push("/login");
     }
     if (!res.success && res.error) {
       toast.error(res.error);
@@ -50,7 +52,9 @@ export default function RegisterForm() {
           type="text"
           id="name"
           {...register("name")}
-          className={`border p-2 w-full rounded-sm text-sm `}
+          className={`border p-2 w-full rounded-sm text-sm ${
+            errors.name ? "border-red-600" : ""
+          }`}
           autoComplete="off"
         />
 
@@ -70,7 +74,9 @@ export default function RegisterForm() {
           type="email"
           id="email_address"
           {...register("email")}
-          className={`border p-2 w-full rounded-sm text-sm `}
+          className={`border p-2 w-full rounded-sm text-sm ${
+            errors.email ? "border-red-600" : ""
+          }`}
           autoComplete="off"
         />
         {errors.email && (
@@ -88,7 +94,9 @@ export default function RegisterForm() {
           id="pass"
           {...register("password")}
           placeholder="8+ characters"
-          className={`border p-2 w-full rounded-sm text-sm `}
+          className={`border p-2 w-full rounded-sm text-sm ${
+            errors.password ? "border-red-600" : ""
+          }`}
           autoComplete="off"
         />
 
@@ -107,7 +115,9 @@ export default function RegisterForm() {
           id="confirmPassword"
           {...register("confirmPassword")}
           placeholder="8+ characters"
-          className={`border p-2 w-full rounded-sm text-sm `}
+          className={`border p-2 w-full rounded-sm text-sm ${
+            errors.confirmPassword ? "border-red-600" : ""
+          }`}
           autoComplete="off"
         />
 

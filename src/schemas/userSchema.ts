@@ -77,3 +77,16 @@ export const resetPasswordSchema = z
     path: ["confirmPassword"],
     message: "Passwords do not match",
   });
+
+export const addressSchema = z.object({
+  address: z.string().trim().min(3, "Address  is required"),
+  companyName: z.optional(z.string().trim()),
+  city: z.string().trim().min(3, "City is required"),
+  state: z.string().trim().min(2, "State is required"),
+  zip: z.string().trim().min(5, "Zip code is required"),
+  country: z.string().trim().min(3, "Country is required"),
+  firstName: z.string().trim().min(3, "First name  is required"),
+  lastName: z.string().trim().min(3, "Last name  is required"),
+  email: z.string().toLowerCase().email("Invalid email"),
+  phone: z.string().trim().min(10, "Phone number must be 10 digits long"),
+});

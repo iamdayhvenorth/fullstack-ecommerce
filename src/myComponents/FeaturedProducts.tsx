@@ -45,6 +45,7 @@ export default function FeaturedProducts() {
                   width={312}
                   height={400}
                   className="object-cover h-[366px]"
+                  priority
                 />
               </div>
             </div>

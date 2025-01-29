@@ -17,6 +17,7 @@ export default function TopRatedCard({
           width={80}
           height={80}
           className="object-cover w-[60px] h-[60px]"
+          priority
         />
       </div>
       <div className="flex-1">

@@ -135,7 +135,7 @@ export const RESET_PASSWORD = `
       
         <p>{link}</p>
         
-        <p>This code will expire in 1hr minutes</p>
+        <p>This code will expire in 1hr </p>
         <p>
           If you didn&apos;t request for reset link, please ignore this email.
         </p>

@@ -29,6 +29,7 @@ export default function FeatureProductCard() {
           width={202}
           height={172}
           className="object-cover"
+          priority
         />
       </div>
       <div className="flex flex-col p-2 gap-1">

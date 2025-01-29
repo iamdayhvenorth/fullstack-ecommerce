@@ -3,7 +3,7 @@
 import { resetPassword, ResetPasswordForm } from "@/actions/auth";
 import { resetPasswordSchema } from "@/schemas/userSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { redirect, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -24,12 +24,14 @@ export default function ResetPassword() {
     resolver: zodResolver(resetPasswordSchema),
   });
 
+  const router = useRouter();
+
   const onSubmit = async (data: ResetPasswordForm) => {
     const res = await resetPassword(data, token, userId);
     if (res.success && res.message) {
       toast.success(res.message);
       reset();
-      redirect("/login");
+      router.push("/login");
     }
 
     if (res.error) {

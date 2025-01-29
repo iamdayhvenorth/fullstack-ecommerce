@@ -28,6 +28,7 @@ export default function BlogCard(props: BlogProps) {
           width={320}
           height={200}
           className="object-cover  rounded-sm"
+          priority
         />
       </div>
       <div className="mt-3">

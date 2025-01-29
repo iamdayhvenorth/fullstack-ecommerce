@@ -1,4 +1,5 @@
 import AddressForm from "@/myComponents/AddressForm";
+import BillingAddressForm from "@/myComponents/BillingAddressForm";
 import PasswordForm from "@/myComponents/PasswordForm";
 import ProfileForm from "@/myComponents/ProfileForm";
 import Image from "next/image";
@@ -36,15 +37,10 @@ export default function Profile() {
           </h2>
 
           <div className="p-2">
-            <AddressForm />
-
-            <div className="mt-4">
-              <button className="text-sm font-semibold text-white bg-[#fa8232] py-2 px-3 rounded-[2px] opacity-80 hover:opacity-100 transition-opacity duration-150 ease-in uppercase w-fit">
-                Save Changes
-              </button>
-            </div>
+            <BillingAddressForm />
           </div>
         </div>
+
         <div className="border divide-y w-1/2">
           <h2 className="p-2 text-dark font-medium text-sm uppercase">
             Shipping Address

@@ -24,6 +24,7 @@ export default function CategoryCard() {
                 width={148}
                 height={148}
                 className="object-cover"
+                priority
               />
             </div>
             <h4 className="text-center font-medium text-base text-dark ">

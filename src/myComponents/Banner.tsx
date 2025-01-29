@@ -32,6 +32,7 @@ export default function Banner() {
               width={500}
               height={400}
               className="object-cover"
+              priority
             />
 
             <span className="absolute w-[100px] h-[100px] top-6 left-0  rounded-full border-[4px] border-white bg-[#ffcead] flex items-center justify-center font-semibold text-[1.25rem] leading-7 ">

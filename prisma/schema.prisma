@@ -16,13 +16,14 @@ datasource db {
 model User {
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
   name            String?
-  email           String?   @unique
+  email           String    @unique
   emailVerified   DateTime?
   isEmailVerified Boolean   @default(false)
   password        String?
   image           String?
   role            Role      @default(CUSTOMER)
   bio             String?
+  address         Address[]
 
   // profilePic     String? @db.String
   // coverPic       String? @db.String
@@ -62,19 +63,29 @@ enum Role {
   ADMIN
 }
 
+enum AddressType {
+  BILLING
+  SHIPPING
+}
+
 model Address {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  userId   String @db.ObjectId
-  address1 String
-  address2 String
-  city     String
-  state    String
-  zip      String
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String      @db.ObjectId
+  firstName String
+  lastName  String
+  type      AddressType @default(BILLING)
+  address   String
+  country   String
+  city      String
+  state     String
+  zip       String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([id, userId])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, id, type])
 }
 
 // model Session {
@@ -86,15 +97,6 @@ model Address {
 
 //   createdAt DateTime @default(now())
 //   updatedAt DateTime @updatedAt
-// }
-
-// model VerificationToken {
-//   id         String   @id @default(auto()) @map("_id") @db.ObjectId
-//   identifier String
-//   token      String
-//   expires    DateTime
-
-//   @@unique([identifier, token])
 // }
 
 model EmailResetToken {

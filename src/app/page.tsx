@@ -49,6 +49,7 @@ export default async function Home() {
                     alt="Xbox Image"
                     width={300}
                     height={400}
+                    priority
                   />
 
                   <div className="absolute top-3 right-3 w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#2da5f3] text-white flex items-center justify-center text-sm font-semibold">
@@ -82,6 +83,7 @@ export default async function Home() {
                   alt="Google Pixel 6 Pro Image"
                   width={300}
                   height={300}
+                  priority
                 />
 
                 <span className="absolute py-2 px-4 rounded-sm bg-[#efd33d] text-black font-semibold text-base uppercase -top-2 left-12">
@@ -98,6 +100,7 @@ export default async function Home() {
                   alt="Black-airpod"
                   width={150}
                   height={150}
+                  priority
                 />
               </div>
               <div className="flex flex-col gap-1">

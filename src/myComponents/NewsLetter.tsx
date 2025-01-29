@@ -36,30 +36,35 @@ export default function NewsLetter() {
               alt="samsung"
               width={72}
               height={72}
+              priority
             />
             <Image
               src="/images/amazon.svg"
               alt="samsung"
               width={72}
               height={72}
+              priority
             />
             <Image
               src="/images/philips.svg"
               alt="samsung"
               width={72}
               height={72}
+              priority
             />
             <Image
               src="/images/toshiba.svg"
               alt="samsung"
               width={72}
               height={72}
+              priority
             />
             <Image
               src="/images/samsung.svg"
               alt="samsung"
               width={72}
               height={72}
+              priority
             />
           </div>
         </div>

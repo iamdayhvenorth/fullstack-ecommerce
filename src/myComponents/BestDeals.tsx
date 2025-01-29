@@ -46,6 +46,7 @@ export default function BestDeals() {
                   alt="PS5"
                   width={280}
                   height={260}
+                  priority
                 />
               </div>
 
