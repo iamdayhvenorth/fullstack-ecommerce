@@ -8,12 +8,43 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { countries } from "@/data";
+import { fetchCountryStates } from "@/lib/countryStates";
 import { addressSchema } from "@/schemas/userSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
+type CountryState = {
+  name: string;
+  stateCode: string;
+};
+
 export default function BillingAddressForm() {
+  const [countryCode, setCountryCode] = useState<string | null>(null);
+  const [countryStates, setCountryStates] = useState<CountryState[]>([]);
+  const [state, setState] = useState<string | null>();
+
+  useEffect(() => {
+    const getStates = async () => {
+      if (countryCode) {
+        const states = await fetchCountryStates(countryCode);
+        setCountryStates(states);
+      }
+    };
+
+    if (countryCode) {
+      getStates();
+    }
+  }, [countryCode]);
+
+  const handleCountryChange = (value: string) => {
+    setCountryCode(value);
+  };
+  const handleStateChange = (value: string) => {
+    setState(value);
+  };
   const {
     handleSubmit,
     register,
@@ -117,9 +148,11 @@ export default function BillingAddressForm() {
                 <SelectValue placeholder="select country" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Bangladesh">Bangladesh</SelectItem>
-                <SelectItem value="Nigeria">Nigeria</SelectItem>
-                <SelectItem value="United State">United State</SelectItem>
+                {countries.map((country) => (
+                  <SelectItem key={country.name} value={country.code}>
+                    {country.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           )}

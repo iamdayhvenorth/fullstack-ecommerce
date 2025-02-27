@@ -31,7 +31,7 @@ export type ForgotPassEmail = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
 export type AddressFormData = z.infer<typeof addressSchema>;
 
-const getCurrentUser = async () => {
+export const getCurrentUser = async () => {
   const user = await auth();
   return user;
 };
@@ -80,7 +80,7 @@ export const registerUser = async (data: SignupData) => {
 
   if (!result.success)
     return { success: false, error: "Please all fields are required" };
-  const { email, name, password } = result.data;
+  const { email, lastname, firstname, password } = result.data;
 
   try {
     // const duplicateUser = await User.findOne({email})
@@ -97,7 +97,8 @@ export const registerUser = async (data: SignupData) => {
     const hashedPassword = await bcrypt.hash(password, salt);
     const newUser = await prisma.user.create({
       data: {
-        name,
+        lastname,
+        firstname,
         email,
         password: hashedPassword,
       },
@@ -149,7 +150,7 @@ export const updatePersonalInfo = async (data: PersonalInfoForm) => {
     if (session?.user) {
       if (!result.success)
         return { success: false, error: "Email/Password required" };
-      const { email, name } = result.data;
+      const { lastname, phone, zip, firstname, secondaryEmail } = result.data;
 
       // verify if user exist in the db
       const user = await prisma.user.findUnique({
@@ -163,7 +164,11 @@ export const updatePersonalInfo = async (data: PersonalInfoForm) => {
       await prisma.user.update({
         where: { id: user.id },
         data: {
-          name,
+          lastname,
+          phone,
+          zip,
+          firstname,
+          secondaryEmail: secondaryEmail || undefined,
         },
       });
 
@@ -389,14 +394,17 @@ export const updateUserAddress = async (data: AddressFormData) => {
 
       const user = await prisma.user.findUnique({
         where: { id: session.user.id },
+        include: { address: true },
       });
+
+      console.log(user);
 
       if (!user) return { success: false, error: "You are not auhorised" };
 
       const address = await prisma.address.findFirst({
         where: {
           userId: user.id,
-          type: "BILLING",
+          type: "SHIPPING",
         },
       });
 
@@ -404,6 +412,7 @@ export const updateUserAddress = async (data: AddressFormData) => {
       if (!address) {
         await prisma.address.create({
           data: {
+            type: "SHIPPING",
             userId: user.id,
             zip: res.data.zip,
             city: res.data.city,
@@ -439,4 +448,21 @@ export const updateUserAddress = async (data: AddressFormData) => {
   } catch (error) {
     return { success: false, error: (error as any).message };
   }
+};
+
+export const userProfile = async () => {
+  const session = await auth();
+
+  if (!session?.user)
+    return { success: false, error: "you are not authenticated" };
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    include: {
+      address: true,
+    },
+  });
+
+  if (!user) return { success: false, error: "u re not authorised" };
+  return { success: true, error: "u free" };
 };

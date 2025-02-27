@@ -1,3 +1,4 @@
+import { fetchProfile } from "@/lib/fetchUserProile";
 import AddressForm from "@/myComponents/AddressForm";
 import BillingAddressForm from "@/myComponents/BillingAddressForm";
 import PasswordForm from "@/myComponents/PasswordForm";
@@ -5,7 +6,8 @@ import ProfileForm from "@/myComponents/ProfileForm";
 import Image from "next/image";
 import React from "react";
 
-export default function Profile() {
+export default async function Profile() {
+  const user = await fetchProfile();
   return (
     <section className="flex flex-col gap-3">
       {/* Personal info */}
@@ -24,7 +26,7 @@ export default function Profile() {
             />
           </div>
           <div className="flex-1 w-full focus:outline-none text-dark font-normal text-sm p-1">
-            <ProfileForm />
+            <ProfileForm name={user?.data?.name} />
           </div>
         </div>
       </section>

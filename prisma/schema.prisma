@@ -15,8 +15,10 @@ datasource db {
 
 model User {
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  name            String?
+  firstname       String?
+  lastname        String?
   email           String    @unique
+  secondaryEmail  String?
   emailVerified   DateTime?
   isEmailVerified Boolean   @default(false)
   password        String?
@@ -24,11 +26,17 @@ model User {
   role            Role      @default(CUSTOMER)
   bio             String?
   address         Address[]
-
+  dob             DateTime?
+  phone           String?
+  gender          Gender?
+  country         String?
+  state           String?
+  zip             String?
+  accounts        Account[]
   // profilePic     String? @db.String
   // coverPic       String? @db.String
   // socialAccounts SocialAccount[]
-  accounts Account[]
+
   // sessions      Session[]
   // Optional for WebAuthn support
 
@@ -61,6 +69,11 @@ model Account {
 enum Role {
   CUSTOMER
   ADMIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
 }
 
 enum AddressType {

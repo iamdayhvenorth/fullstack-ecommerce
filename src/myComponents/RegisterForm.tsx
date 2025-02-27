@@ -44,23 +44,44 @@ export default function RegisterForm() {
 
   return (
     <form className="p-6 flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-      <div>
-        <label htmlFor="name" className="text-sm font-medium text-dark mb-1">
-          Name
-        </label>
-        <input
-          type="text"
-          id="name"
-          {...register("name")}
-          className={`border p-2 w-full rounded-sm text-sm ${
-            errors.name ? "border-red-600" : ""
-          }`}
-          autoComplete="off"
-        />
+      <div className="flex gap-4">
+        <div>
+          <label htmlFor="name" className="text-sm font-medium text-dark mb-1">
+            First Name
+          </label>
+          <input
+            type="text"
+            id="first_name"
+            {...register("firstname")}
+            className={`border p-2 w-full rounded-sm text-sm ${
+              errors.firstname ? "border-red-600" : ""
+            }`}
+            autoComplete="off"
+          />
 
-        {errors.name && (
-          <p className="text-sm text-red-600">{errors.name.message}</p>
-        )}
+          {errors.firstname && (
+            <p className="text-sm text-red-600">{errors.firstname.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="name" className="text-sm font-medium text-dark mb-1">
+            Last Name
+          </label>
+          <input
+            type="text"
+            id="last_name"
+            {...register("lastname")}
+            className={`border p-2 w-full rounded-sm text-sm ${
+              errors.lastname ? "border-red-600" : ""
+            }`}
+            autoComplete="off"
+          />
+
+          {errors.lastname && (
+            <p className="text-sm text-red-600">{errors.lastname.message}</p>
+          )}
+        </div>
       </div>
 
       <div>

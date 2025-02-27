@@ -7,8 +7,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { countries } from "@/data";
-import { fetchCountryStates } from "@/lib/countryStates";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,6 +14,9 @@ import { updatePersonInfoSchema } from "@/schemas/userSchema";
 import { PersonalInfoForm, updatePersonalInfo } from "@/actions/auth";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
+
+import { useUserStore } from "@/store/user";
+import formatDate from "@/utils/moment";
 
 type CountryState = {
   name: string;
@@ -27,46 +28,35 @@ export default function ProfileForm() {
   const [countryStates, setCountryStates] = useState<CountryState[]>([]);
   const [state, setState] = useState<string | null>();
 
-  const { update } = useSession();
+  const { data: session } = useSession();
+
+  const getProfile = useUserStore((state) => state.getProfile);
+  const user = useUserStore((state) => state.user);
+  console.log(user);
+
+  useEffect(() => {
+    if (session?.user.id) getProfile(session?.user?.id);
+  }, [session]);
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<PersonalInfoForm>({
     resolver: zodResolver(updatePersonInfoSchema),
-    defaultValues: {
-      name: "David",
-      email: "david@example.com",
-    },
   });
 
   useEffect(() => {
-    // if(countryCode) fetchCountryStates(countryCode)
-    const getStates = async () => {
-      if (countryCode) {
-        const states = await fetchCountryStates(countryCode);
-        setCountryStates(states);
-      }
-    };
-
-    if (countryCode) {
-      getStates();
+    if (user) {
+      reset(user); // Update the form with API data
     }
-  }, [countryCode]);
-
-  const handleCountryChange = (value: string) => {
-    setCountryCode(value);
-  };
-  const handleStateChange = (value: string) => {
-    setState(value);
-  };
+  }, [user, reset]);
 
   const onSubmit = async (data: PersonalInfoForm) => {
     const res = await updatePersonalInfo(data);
     if (res.success && res.message) {
       toast.success(res.message);
-      await update();
     }
     if (!res.success && res.error) {
       toast.error(res.error);
@@ -79,69 +69,81 @@ export default function ProfileForm() {
       className="form grid grid-cols-2 gap-2"
     >
       <label>
-        <span>Display Name</span>
+        <span>First Name</span>
         <input
           type="text"
-          className={`${errors.name ? "border-red-600" : ""}`}
-          {...register("name")}
+          className={`${errors.firstname ? "border-red-600" : ""}`}
+          {...register("firstname")}
         />
       </label>
+
       <label>
-        <span>Username</span>
-        <input type="text" defaultValue={"kevin123"} />
+        <span>Last Name</span>
+        <input
+          type="text"
+          className={`${errors.lastname ? "border-red-600" : ""}`}
+          {...register("lastname")}
+        />
       </label>
+
       <label>
         <span>Full Name</span>
         <input
           type="text"
-          defaultValue={"Kevin Gilbert"}
           className={`${errors.full_name ? "border-red-600" : ""}`}
           {...register("full_name")}
         />
       </label>
+
       <label>
         <span>Email</span>
         <input
           type="email"
-          className={`${errors.email ? "border-red-600" : ""}`}
+          disabled
+          className={`disabled:cursor-not-allowed ${
+            errors.email ? "border-red-600" : ""
+          }`}
           {...register("email")}
         />
       </label>
+
       <label>
         <span>Secondary Email</span>
         <input
           type="email"
-          defaultValue={"kevin12345@gmail.com"}
-          className={`${errors.secondary_email ? "border-red-600" : ""}`}
-          {...register("secondary_email")}
+          className={`${errors.secondaryEmail ? "border-red-600" : ""}`}
+          {...register("secondaryEmail")}
         />
       </label>
+
       <label>
         <span>Phone Number</span>
         <input
           type="text"
-          defaultValue={"+1-202-555-0118"}
           className={`${errors.phone ? "border-red-600" : ""}`}
           {...register("phone")}
         />
       </label>
+
       <label>
-        <span>Country/Region</span>
-        <Select onValueChange={handleCountryChange}>
+        <span>Gender</span>
+        <Select>
           <SelectTrigger className="w-full rounded-[2px] py-[6px] px-2 outline-none mt-2">
-            <SelectValue placeholder="select country" />
+            <SelectValue placeholder="select gender" />
           </SelectTrigger>
           <SelectContent>
-            {countries.map((country) => (
-              <SelectItem key={country.name} value={country.code}>
-                {country.name}
-              </SelectItem>
-            ))}
+            <SelectItem value="Male">Male</SelectItem>
+            <SelectItem value="Female">Male</SelectItem>
           </SelectContent>
         </Select>
       </label>
 
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-4">
+        <span className="text-dark font-medium text-sm"> D.O.B</span>{" "}
+        <span>{user?.dob ? formatDate(user.dob) : "N/A"}</span>
+      </div>
+
+      {/* <div className="flex gap-2">
         <label className="w-1/2">
           <span>States</span>
           <Select onValueChange={handleStateChange}>
@@ -169,9 +171,9 @@ export default function ProfileForm() {
 
         <label className="w-1/2">
           <span>Zip Code</span>
-          <input type="text" defaultValue={"1207"} />
+          <input type="text" {...register("zip")} />
         </label>
-      </div>
+      </div> */}
 
       <div className="mt-4">
         <button className="text-sm font-semibold text-white bg-[#fa8232] py-2 px-3 rounded-[2px] opacity-80 hover:opacity-100 transition-opacity duration-150 ease-in uppercase w-fit">
