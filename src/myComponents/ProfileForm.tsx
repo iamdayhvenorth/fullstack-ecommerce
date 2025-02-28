@@ -13,30 +13,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { updatePersonInfoSchema } from "@/schemas/userSchema";
 import { PersonalInfoForm, updatePersonalInfo } from "@/actions/auth";
 import toast from "react-hot-toast";
-import { useSession } from "next-auth/react";
 
 import { useUserStore } from "@/store/user";
 import formatDate from "@/utils/moment";
 
-type CountryState = {
-  name: string;
-  stateCode: string;
-};
-
 export default function ProfileForm() {
-  const [countryCode, setCountryCode] = useState<string | null>(null);
-  const [countryStates, setCountryStates] = useState<CountryState[]>([]);
-  const [state, setState] = useState<string | null>();
-
-  const { data: session } = useSession();
-
   const getProfile = useUserStore((state) => state.getProfile);
   const user = useUserStore((state) => state.user);
-  console.log(user);
 
   useEffect(() => {
-    if (session?.user.id) getProfile(session?.user?.id);
-  }, [session]);
+    getProfile();
+  }, []);
 
   const {
     register,

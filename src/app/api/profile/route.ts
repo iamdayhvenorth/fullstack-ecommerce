@@ -1,18 +1,21 @@
 import { getCurrentUser } from "@/actions/auth";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const { id } = params;
+export async function GET(req: NextRequest) {
+  const data = await getCurrentUser();
 
+  if (!data?.user) {
+    return NextResponse.json(
+      { message: "Not Authenticated", success: false },
+      { status: 401 }
+    );
+  }
+
+  try {
     const user = await prisma.user.findUnique({
       where: {
-        id,
+        id: data.user.id,
       },
       include: {
         address: true,

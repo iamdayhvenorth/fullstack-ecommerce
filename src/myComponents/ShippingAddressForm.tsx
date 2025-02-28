@@ -21,7 +21,7 @@ type CountryState = {
   stateCode: string;
 };
 
-export default function BillingAddressForm() {
+export default function ShippingAddressForm() {
   const [countryCode, setCountryCode] = useState<string | null>(null);
   const [countryStates, setCountryStates] = useState<CountryState[]>([]);
   const [state, setState] = useState<string | null>();
@@ -56,7 +56,7 @@ export default function BillingAddressForm() {
   });
 
   const updateAddress = async (data: AddressFormData) => {
-    const res = await updateUserAddress(data, "BILLING");
+    const res = await updateUserAddress(data, "SHIPPING");
     if (res.success && res.message) {
       toast.success(res.message);
       return;

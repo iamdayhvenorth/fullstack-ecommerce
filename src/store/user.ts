@@ -16,7 +16,7 @@ type User = {
 };
 
 type UserAction = {
-  getProfile: (id: string) => Promise<void>;
+  getProfile: () => Promise<void>;
 };
 
 type UserInfo = {
@@ -27,10 +27,10 @@ export const useUserStore = create<UserInfo & UserAction>()(
   devtools(
     immer((set) => ({
       user: null,
-      getProfile: async (id: string) => {
+      getProfile: async () => {
         try {
-          const response = await axios.get(`/api/profile/${id}`);
-          console.log(response.data);
+          const response = await axios.get(`/api/profile`);
+
           set({ user: response.data?.user });
         } catch (error) {
           console.error("Failed to fetch user profile:", error);

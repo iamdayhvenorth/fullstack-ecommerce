@@ -176,8 +176,8 @@ export const updatePersonalInfo = async (data: PersonalInfoForm) => {
     }
 
     return { success: false, error: "You are not authenticated" };
-  } catch (error) {
-    return { success: false, error: (error as any).message };
+  } catch (error: any) {
+    return { success: false, error: error.message };
   }
 };
 
@@ -384,7 +384,10 @@ export const resetPassword = async (
   }
 };
 
-export const updateUserAddress = async (data: AddressFormData) => {
+export const updateUserAddress = async (
+  data: AddressFormData,
+  type: "BILLING" | "SHIPPING"
+) => {
   const session = await auth();
   try {
     if (session?.user) {
@@ -397,14 +400,12 @@ export const updateUserAddress = async (data: AddressFormData) => {
         include: { address: true },
       });
 
-      console.log(user);
-
       if (!user) return { success: false, error: "You are not auhorised" };
 
       const address = await prisma.address.findFirst({
         where: {
           userId: user.id,
-          type: "SHIPPING",
+          type,
         },
       });
 
@@ -412,7 +413,7 @@ export const updateUserAddress = async (data: AddressFormData) => {
       if (!address) {
         await prisma.address.create({
           data: {
-            type: "SHIPPING",
+            type,
             userId: user.id,
             zip: res.data.zip,
             city: res.data.city,

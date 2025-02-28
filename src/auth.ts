@@ -27,10 +27,10 @@ export const {
   session: { strategy: "jwt" },
   ...authConfig,
   callbacks: {
-    jwt({ token }) {
+    jwt({ token, user }) {
       token.role = "hyyt6ygyt";
 
-      return token;
+      return { ...token, ...user };
     },
     session({ token, session }) {
       if (token.sub && session.user) {

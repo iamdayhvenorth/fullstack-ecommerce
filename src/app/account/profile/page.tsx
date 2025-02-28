@@ -3,6 +3,7 @@ import AddressForm from "@/myComponents/AddressForm";
 import BillingAddressForm from "@/myComponents/BillingAddressForm";
 import PasswordForm from "@/myComponents/PasswordForm";
 import ProfileForm from "@/myComponents/ProfileForm";
+import ShippingAddressForm from "@/myComponents/ShippingAddressForm";
 import Image from "next/image";
 import React from "react";
 
@@ -26,7 +27,7 @@ export default async function Profile() {
             />
           </div>
           <div className="flex-1 w-full focus:outline-none text-dark font-normal text-sm p-1">
-            <ProfileForm name={user?.data?.name} />
+            <ProfileForm />
           </div>
         </div>
       </section>
@@ -49,13 +50,7 @@ export default async function Profile() {
           </h2>
 
           <div className="p-2">
-            <AddressForm />
-
-            <div className="mt-4">
-              <button className="text-sm font-semibold text-white bg-[#fa8232] py-2 px-3 rounded-[2px] opacity-80 hover:opacity-100 transition-opacity duration-150 ease-in uppercase w-fit">
-                Save Changes
-              </button>
-            </div>
+            <ShippingAddressForm />
           </div>
         </div>
       </section>
